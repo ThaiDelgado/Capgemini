@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Cadastro de Anúncios</title>
+
+    <script>
+        const arrCadastro = [];
+
+        function cadastra() {
+            // Obtém os valores informados
+            const nome = document.getElementById('nome').value;
+            const cliente = document.getElementById('cliente').value;
+            const inicio = document.getElementById('inicio').value;
+            const fim = document.getElementById('fim').value;
+            const investimentoDia = document.getElementById('investimentoDia').value;
+
+            // Cria um objeto anúncio
+            const obj = {
+                nome,
+                cliente,
+                inicio,
+                fim,
+                investimentoDia
+            }
+
+            // Adiciona o objeto anúncio no array, que simula o DB
+            arrCadastro.push(obj);
+
+            // Processo dinâmico para renderizar os itens do array no HTML
+            let e = `
+                    <tr>
+                        <td>Nome<td/>
+                        <td>Cliente<td/>
+                        <td>Inicio<td/>
+                        <td>Fim<td/>
+                        <td>Investimento dia<td/>
+                    <tr/>`;
+
+            for (let i = 0; i < arrCadastro.length; i++) {
+                const anuncio = arrCadastro[i];
+                e += `
+                    <tr>
+                        <td>${ anuncio.nome }<td/>
+                        <td>${ anuncio.cliente }<td/>
+                        <td>${ anuncio.inicio }<td/>
+                        <td>${ anuncio.fim }<td/>
+                        <td>${ anuncio.investimentoDia }<td/>
+                    <tr/>`;
+            }
+
+            document.getElementById('resultCadastro').innerHTML = e;
+        }
+
+        function relatorio() {
+            // Nome do cliente usado como parâmetro de busca
+            const clienteFiltroRelatorio = document.getElementById('clienteFiltroRelatorio').value;
+
+            // Array com o resultado da pesquisa
+            const arrPesquisa = arrCadastro.filter(anuncio => anuncio.cliente === clienteFiltroRelatorio);
+
+            // Caso nenhum item seja encontrado
+            if (!arrPesquisa.length) {
+                alert('Nenhum item encontrado. Verifique o nome do cliente informado.')
+            }
+
+            // Processo dinâmico para renderizar os itens do array no HTML
+            let e = `
+                    <tr>
+                        <td>Nome<td/>
+                        <td>Cliente<td/>
+                        <td>Inicio<td/>
+                        <td>Fim<td/>
+                        <td>Investimento dia<td/>
+                        <td>Total investido<td/>
+                    <tr/>`;
+            for (let index = 0; index < arrPesquisa.length; index++) {
+                const anuncio = arrPesquisa[index];
+
+                const inicio = new Date(anuncio.inicio);
+                const fim = new Date(anuncio.fim);
+
+                const diffInTime = fim.getTime() - inicio.getTime();
+                const diffInDays = diffInTime / (1000 * 3600 * 24);
+
+                const totalInvestido = Number.parseFloat(anuncio.investimentoDia) * diffInDays;
+
+                e += `
+                    <tr>
+                        <td>${ anuncio.nome }<td/>
+                        <td>${ anuncio.cliente }<td/>
+                        <td>${ anuncio.inicio }<td/>
+                        <td>${ anuncio.fim }<td/>
+                        <td>${ anuncio.investimentoDia }<td/>
+                        <td>${ totalInvestido }<td/>
+                    <tr/>`;
+            }
+
+            document.getElementById('resultPesquisa').innerHTML = e;
+
+        }
+    </script>
+</head>
+<body>
+    <table>
+        <tr>
+            <td colspan="2">
+                <h1>Cadastro de Anúncio</h1>
+            </td>
+        </tr>
+        <tr>
+            <td>Nome:</td>
+            <td><input type="text" id="nome" /></td>
+        </tr>
+
+        <tr>
+            <td>Cliente:</td>
+            <td><input type="text" id="cliente" /></td>
+        </tr>
+        
+        <tr>
+            <td>Data inicio:</td>
+            <td><input type="date" id="inicio" /></td>
+        </tr>
+
+        <tr>
+            <td>Data fim:</td>
+            <td><input type="date" id="fim" /></td>
+        </tr>
+
+        <tr>
+            <td>Investimento por dia:</td>
+            <td><input type="number" id="investimentoDia" /></td>
+        </tr>
+
+        <tr>
+            <td></td>
+            <td style="padding-top: 4%;">
+                <button onclick="javascript: cadastra()">Cadastrar</button>
+            </td>
+        </tr>
+    </table>
+
+    <table id="resultCadastro"></table>
+
+    <table>
+        <tr>
+            <td colspan="4">
+                <h1>Relatórios</h1>
+            </td>
+        </tr>
+
+        <tr>
+            <td>Cliente</td>
+            <td>
+                <input type="text" id="clienteFiltroRelatorio" />
+            </td>
+            <td style="padding-left: 4%;">
+                <button onclick="javascript: relatorio()">Consultar</button>
+            </td>
+        </tr>
+    </table>
+
+    <table id="resultPesquisa"></table>
+</body>
+</html>
